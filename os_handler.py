@@ -871,7 +871,7 @@ def IUser_create_file_fromstr(nameFile, pathDest, strInfo, fileType, flg_tryremo
 
 		if not resRemove:
 			if flg_tstamp:
-				nameUsed   = nameUsed + "_" + IBase_get_timestamp("yyyymmdd_hhmmss")
+				nameUsed   = nameUsed + "_" + strTimestamp
 				flg_tstamp = False
 			else:
 				cnt = cnt + 1
