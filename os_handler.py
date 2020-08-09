@@ -17,6 +17,7 @@
 # - Text file parser
 
 
+
 #*** Library Import ********************************************************************************
 # Operating system
 import  datetime
@@ -24,6 +25,7 @@ import  shutil
 import  pathlib
 import  os
 import  binascii
+import  json
 
 # BBS_PyGem
 import  dataset_handler 	as hs_dataset
@@ -820,6 +822,68 @@ def IUser_create_txt_file_fromlist(nameFile, path_dest, listInfo, chr_separator)
 
 	#--- Release -----------------------------------------------------------------------------------
 	return path_full
+
+def IUser_create_file_fromstr(nameFile, pathDest, strInfo, fileType, flg_tryremove, flg_tstamp):
+	#*** Documentation *****************************************************************************
+	'''Documentation
+
+		Create file that is written 'strInfo' content into it.
+
+	[str]  nameFile, 	  Target filename, Default is "bbs_tmpfile_" + timestamp
+	[str]  pathDest, 	  Target file's destination, Default is desktop
+	[str]  strInfo, 	  Content to be written in this file
+	[str]  fileType,      File extension
+	[bool] flg_tryremove, True: Try to remove existing folder first before adding version 
+	[bool] flg_tstamp,    True: Add timestamp to 'nameFolder' first before adding version
+
+	'''
+
+	#*** Input Validation **************************************************************************
+	if not isinstance(strInfo, str): return False
+
+	#*** Initialization ****************************************************************************
+	strTimestamp = IBase_get_timestamp("yyyymmdd_hhmmss")
+	defFilename  = "bbs_tmpfile_" + strTimestamp
+	defFiletype  = ".txt"
+	defPath  	 = IBase_get_desktop_path()
+
+	if not isinstance(flg_tryremove, bool): flg_tryremove = False
+	if not isinstance(flg_tstamp, bool): 	flg_tstamp    = True
+
+	chr_path = getconst_chr_path()[1]
+	pathDest = IBase_get_formatted_path(pathDest, chr_path)
+	cnt  	 = 0
+	
+	#*** Operations ********************************************************************************
+	#--- Destination and File parameters preparation -----------------------------------------------
+	if not (isinstance(pathDest, str) and len(pathDest) > 0): pathDest = defPath
+	if not (isinstance(nameFile, str) and len(nameFile) > 0): nameFile = defFilename
+	if not (isinstance(fileType, str) and len(fileType) > 0): fileType = defFiletype
+
+	#--- Check Existence of 'nameFile' at 'pathDest' -----------------------------------------------
+	nameUsed = nameFile
+
+	while os.path.exists(pathDest + chr_path + nameUsed + fileType):
+		if flg_tryremove:
+			resRemove = IUser_delete_content(pathDest, nameUsed + fileType)
+			flg_tryremove = False
+		else: resRemove = False
+
+		if not resRemove:
+			if flg_tstamp:
+				nameUsed   = nameUsed + "_" + IBase_get_timestamp("yyyymmdd_hhmmss")
+				flg_tstamp = False
+			else:
+				cnt = cnt + 1
+				nameUsed = nameFile + "_" + str(cnt)
+
+	#--- Create file -------------------------------------------------------------------------------
+	with open(pathDest + chr_path + nameUsed + fileType, 'w') as outfile:
+		outfile.write(strInfo)
+		outfile.close()
+
+    #--- Release -----------------------------------------------------------------------------------
+	return pathDest + chr_path + nameUsed + fileType
 
 
 
