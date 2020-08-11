@@ -592,6 +592,40 @@ def IBase_getlist_method_content(listFilePath, flg_issorted):
 	#--- Release -----------------------------------------------------------------------------------
 	return [listFilePath, listMethod]
 
+def IUser_get_valid_name_for_creation(pathDest, nameFile, filetype, flg_tstamp):
+	#*** Documentation *****************************************************************************
+	'''Documentation
+
+		Return a valid name for folder/file creation
+
+	[str]  pathDest, 	  Target file's destination, Default is desktop
+	[str]  nameFile, 	  Target name
+	[str]  filetype, 	  File extension
+	[bool] flg_tstamp,    True: Add timestamp to 'nameFolder' first before adding version
+
+	'''
+
+	#*** Input Validation **************************************************************************
+	if not os.path.exists(pathDest): return 101
+	if not (isinstance(nameFile, str) and len(nameFile) > 0): return nameFile
+
+	#*** Initialization ****************************************************************************
+	if not isinstance(flg_tstamp, bool): flg_tstamp = True
+
+	chr_path  	 = getconst_chr_path()[1]
+	strTimestamp = IBase_get_timestamp("yyyymmdd_hhmmss")
+	nameUsed 	 = nameFile
+
+	#*** Operations ********************************************************************************
+	while os.path.exists(pathDest + chr_path + nameUsed + filetype):
+		if flg_tstamp:
+			nameUsed   = nameFile + "_" + strTimestamp
+			flg_tstamp = False
+		else:
+			cnt = cnt + 1
+			nameUsed = nameFile + "_" + str(cnt)
+	return nameUsed
+
 def IUser_create_folder(strRoot, nameFolder, flg_tryremove, flg_tstamp):
 	#*** Documentation *****************************************************************************
 	'''Documentation
@@ -664,21 +698,25 @@ def IUser_delete_content(strRoot, nameContent):
 		Delete target file/folder
 
 	[str]  strRoot, 	Root directory where nameContent does exist
-	[str]  nameContent, File or Folder name, can' be empty
+	[str]  nameContent, File or Folder name, can be empty
 
 	'''
 
 	#*** Input Validation **************************************************************************
-	strRoot     = str(strRoot)
-	nameContent = str(nameContent)
-
-	if not (len(strRoot) > 0 and len(nameContent) > 0): return 101
+	if not (isinstance(strRoot, str) and len(strRoot) > 0): return 101
 
 	#*** Initialization ****************************************************************************
 	chr_path = getconst_chr_path()[1]
 	strRoot  = IBase_get_formatted_path(strRoot, chr_path) + chr_path
 
 	#*** Operation *********************************************************************************
+	#--- Take last folder instead if 'nameContent' is empty ----------------------------------------
+	if not (isinstance(nameContent, str) and len(nameContent)):
+		tmpInfo  	= os.path.split(strRoot)
+		strRoot  	= tmpInfo[0]
+		nameContent = tmpInfo[1]
+
+	#--- Attemp to delete --------------------------------------------------------------------------
 	if os.path.exists(strRoot + nameContent):
 		try: 		os.remove(strRoot + nameContent) 		# Assume Content is a file
 		except:
