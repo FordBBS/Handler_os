@@ -6,7 +6,8 @@
 
 #*** History ***************************************************************************************
 # 2020/08/08, BBS:	- Move to BBS modules
-# 2020/08/09, BBS: 	- Implemeneted 'IUser_create_file_fromstr'
+# 2020/08/09, BBS: 	- Implemented 'IUser_create_file_fromstr'
+# 2020/08/11, BBS: 	- Implemented 'IUser_get_valid_name_for_creation'
 #
 #***************************************************************************************************
 
@@ -382,7 +383,7 @@ def IBase_get_formatted_path(strPath, chr_conj):
 	#*** Initialization ****************************************************************************
 	list_chr_ToBeConverted = getconst_chr_path()
 
-	if len(chr_conj) == 0: chr_conj = list_chr_ToBeConverted[0]
+	if len(chr_conj) == 0: chr_conj = list_chr_ToBeConverted[1]
 
 	#*** Operations ********************************************************************************
 	for eachChar in list_chr_ToBeConverted: strPath = strPath.replace(eachChar, chr_conj)
