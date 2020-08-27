@@ -1,2 +1,2 @@
 # Handler_os
-Operating System Python handler for general/AVL specific usage
+Operating System handler for general/AVL specific usage
