@@ -8,6 +8,7 @@
 # 2020/08/08, BBS:	- Move to BBS modules
 # 2020/08/09, BBS: 	- Implemented 'IUser_create_file_fromstr'
 # 2020/08/11, BBS: 	- Implemented 'IUser_get_valid_name_for_creation'
+# 2020/10/08, BBS: 	- Implemented 'IUser_read_txt_file'
 #
 #***************************************************************************************************
 
@@ -924,6 +925,37 @@ def IUser_create_file_fromstr(nameFile, pathDest, strInfo, fileType, flg_tryremo
 
     #--- Release -----------------------------------------------------------------------------------
 	return pathDest + chr_path + nameUsed + fileType
+
+def IUser_read_txt_file(pathFile, flg_mode):
+	#*** Documentation *****************************************************************************
+	'''Documentation 
+
+		Return a content exist in 'pathFile' text file
+
+	[str] pathFile,	A path of target text file to be read
+	[int] flg_mode, 0: Read all, 1: Read line
+
+	'''
+
+	#*** Input Validation **************************************************************************
+	if not os.path.isfile(pathFile): return ""
+
+	#*** Initialization ****************************************************************************
+	thisContent = ""
+
+	if str(flg_mode).isnumeric():
+		flg_mode = int(flg_mode)
+		if flg_mode < 0 or flg_mode > 1: flg_mode = 0
+	else: flg_mode = 0
+
+	#*** Operations ********************************************************************************
+	try:
+		with open(pathFile) as curTextFile:
+			if flg_mode == 0: thisContent = curTextFile.read()
+			else: thisContent = curTextFile.readlines()
+			curTextFile.close()
+	except: thisContent = ""
+	return thisContent
 
 
 
