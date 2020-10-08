@@ -938,23 +938,30 @@ def IUser_read_txt_file(pathFile, flg_mode):
 	'''
 
 	#*** Input Validation **************************************************************************
-	if not os.path.isfile(pathFile): return ""
+	# Nothing to be validated
 
 	#*** Initialization ****************************************************************************
-	thisContent = ""
-
 	if str(flg_mode).isnumeric():
 		flg_mode = int(flg_mode)
 		if flg_mode < 0 or flg_mode > 1: flg_mode = 0
 	else: flg_mode = 0
 
+	if flg_mode == 0: thisContent = ""
+	else: thisContent = []
+
 	#*** Operations ********************************************************************************
+	#--- Post-Validation ---------------------------------------------------------------------------
+	if not os.path.isfile(pathFile): return thisContent
+
+	#--- Read Text file ----------------------------------------------------------------------------
 	try:
 		with open(pathFile) as curTextFile:
 			if flg_mode == 0: thisContent = curTextFile.read()
 			else: thisContent = curTextFile.readlines()
 			curTextFile.close()
-	except: thisContent = ""
+	except: RetVal = False
+	
+	#--- Release -----------------------------------------------------------------------------------
 	return thisContent
 
 
