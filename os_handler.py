@@ -9,6 +9,7 @@
 # 2020/08/09, BBS: 	- Implemented 'IUser_create_file_fromstr'
 # 2020/08/11, BBS: 	- Implemented 'IUser_get_valid_name_for_creation'
 # 2020/10/08, BBS: 	- Implemented 'IUser_read_txt_file'
+# 2020/10/28, BBS:	- Implemented 'IUser_compare_files'
 #
 #***************************************************************************************************
 
@@ -222,6 +223,9 @@ def IBase_compare_list_issame(listA, listB):
 	#*** Input Validation **************************************************************************
 	if not (isinstance(listA, list) and isinstance(listB, list)): return 101
 
+	#*** Initialization ****************************************************************************
+	# Nothing to be initialized
+
 	#*** Operations ********************************************************************************
 	flg_same = False
 
@@ -231,6 +235,33 @@ def IBase_compare_list_issame(listA, listB):
 				break
 		else: flg_same = True
 	return flg_same
+
+def IUser_compare_files(fileA, fileB):
+	#*** Documentation *****************************************************************************
+	'''Documentation
+
+		return a boolean flag value whether 2 input files are having exactly same content
+
+	[str] fileA, A string of full path of file A
+	[str] fileB, A string of full path of file B
+	
+	'''
+
+	#*** Input Validation **************************************************************************
+	# Nothing to be validated
+
+	#*** Initialization ****************************************************************************
+	# Nothing to be initialized
+
+	#*** Operations ********************************************************************************
+	#--- Get binary content of each file -----------------------------------------------------------
+	binA = IBase_read_binary(fileA)
+	binB = IBase_read_binary(fileB)
+
+	if not (isinstance(binA, list) and isinstance(binB, list)): return False
+
+	#--- Content comparison ------------------------------------------------------------------------
+	return IBase_compare_list_issame(binA, binB)
 
 
 
