@@ -1,6 +1,7 @@
 ####################################################################################################
 #                                                                                                  #
 # Python, OS handler, BBS					   						                               #
+# GitHub: https://github.com/FordBBS/Handler_OS											       	   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -10,6 +11,7 @@
 # 2020/08/11, BBS: 	- Implemented 'IUser_get_valid_name_for_creation'
 # 2020/10/08, BBS: 	- Implemented 'IUser_read_txt_file'
 # 2020/10/28, BBS:	- Implemented 'IUser_compare_files'
+# 2020/10/29, BBS:	- Change 'IUser_create_file_fromstr' to make it possible for "empty" file name
 #
 #***************************************************************************************************
 
@@ -929,11 +931,12 @@ def IUser_create_file_fromstr(nameFile, pathDest, strInfo, fileType, flg_tryremo
 	#*** Operations ********************************************************************************
 	#--- Destination and File parameters preparation -----------------------------------------------
 	if not (isinstance(pathDest, str) and len(pathDest) > 0): pathDest = defPath
-	if not (isinstance(nameFile, str) and len(nameFile) > 0): nameFile = defFilename
-	if not (isinstance(fileType, str) and len(fileType) > 0): fileType = defFiletype
+	if len(nameFile + fileType) == 0:
+		nameFile = defFilename
+		fileType = defFiletype
 
 	#--- Check Existence of 'nameFile' at 'pathDest' -----------------------------------------------
-	nameUsed = nameFile
+	nameUsed = str(nameFile)
 
 	while os.path.exists(pathDest + chr_path + nameUsed + fileType):
 		if flg_tryremove:
