@@ -19,7 +19,9 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 
 	'*** Pre-Validation ****************************************************************************
 	strRootPath = CStr(strRootPath)
-	If len(strRootPath) < 1 Then Exit Function
+	If len(strRootPath) < 1 Then
+		Exit Function
+	End If
 
 	'*** Initialization ****************************************************************************
 	Dim objFSO, objFolder, objThis, chr_join, thisPath
@@ -36,7 +38,9 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 		getMode = CInt(getMode)
 	End If
 
-	If getMode < 0 or getMode > 2 Then getMode = 0
+	If getMode < 0 or getMode > 2 Then
+		getMode = 0
+	End If
 
 	'*** Operations ********************************************************************************
 	'--- Check whether 'strRootPath' is a file path ------------------------------------------------
