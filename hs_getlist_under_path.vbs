@@ -15,7 +15,7 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 	'***********************************************************************************************
 	
 	On Error Resume Next
-	hs_getlist_under_path = ""
+	hs_getlist_under_path = Array("")
 
 	'*** Pre-Validation ****************************************************************************
 	strRootPath = CStr(strRootPath)
@@ -45,7 +45,10 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 	'*** Operations ********************************************************************************
 	'--- Check whether 'strRootPath' is a file path ------------------------------------------------
 	If objFSO.FileExists(strRootPath) Then
-		If getMode <> 1 Then hs_getlist_under_path = strRootPath
+		If getMode <> 1 Then
+			hs_getlist_under_path = Array(strRootPath)
+		End If
+
 		Exit Function
 	End If
 
@@ -64,10 +67,10 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 	Set arrFile   = objFolder.Files
 	
 	' Collect 'SubFolder' and append to Result array - recursive
-	For each objThis in arrFolder
+	For Each objThis in arrFolder
 		RetVal = hs_getlist_under_path(objThis.Path, getMode)
 		
-		For each thisPath in RetVal
+		For Each thisPath in RetVal
 			If (objFSO.FileExists(thisPath) and getMode <> 1) _
 				or (Not objFSO.FileExists(thisPath) and getMode <> 2) Then
 				Call hs_arr_append(arrRes, thisPath)
@@ -77,7 +80,7 @@ Function hs_getlist_under_path(ByVal strRootPath, ByVal getMode)
 
 	' Collect files and append to Result array
 	If getMode <> 1 Then
-		For each objThis in arrFile
+		For Each objThis in arrFile
 		    Call hs_arr_append(arrRes, Join(Array(strRootPath, objThis.Name), chr_join))
 		Next
 	End If
