@@ -12,6 +12,7 @@
 # 2020/10/08, BBS: 	- Implemented 'IUser_read_txt_file'
 # 2020/10/28, BBS:	- Implemented 'IUser_compare_files'
 # 2020/10/29, BBS:	- Change 'IUser_create_file_fromstr' to make it possible for "empty" file name
+# 2020/11/30, BBS:	- Implemented 'IBase_prepare_name_for_creation'
 #
 #***************************************************************************************************
 
@@ -997,6 +998,64 @@ def IUser_read_txt_file(pathFile, flg_mode):
 	
 	#--- Release -----------------------------------------------------------------------------------
 	return thisContent
+
+def IBase_prepare_name_for_creation(pathRoot, nameElement, flg_timestamp):
+	#*** Documentation *****************************************************************************
+	'''Documentation
+
+		Prepare a valid element name for creation under 'pathRoot' root directory 
+		provided via 'nameElement'
+		If 'nameElement' already exist, it will be added by either timestamp or version counter
+		
+	[str]  pathRoot, 	  Root directory where nameFolder is expected to be created under
+						  If strRoot doesn't exist, it will be created automatically.
+	[str]  nameElement,   Element name, can't be empty
+	[bool] flg_timestamp, True: Add timestamp to 'nameFile' if it already exist
+						  False: Use version counter if 'nameFile' already exist
+
+	'''
+
+	#*** Input Validation **************************************************************************
+	nameElement = str(nameElement)
+	if len(nameElement) == 0: return False
+
+	#*** Initialization ****************************************************************************
+	chr_path = getconst_chr_path()[1]
+
+	#*** Operations ********************************************************************************
+	#--- Timestamp flag conditioning ---------------------------------------------------------------
+	if not isinstance(flg_timestamp, bool):
+		flg_timestamp = str(flg_timestamp).lower()
+
+		if flg_timestamp.isnumeric():
+			flg_timestamp = int(flg_timestamp)
+			if flg_timestamp != 0: flg_timestamp = True
+			else: flg_timestamp = False
+		elif flg_timestamp != "yes" and flg_timestamp != "true": flg_timestamp = False
+		else: flg_timestamp = True
+
+	#--- Element name conditioning -----------------------------------------------------------------
+	ver_cnt 	= 0
+	orgNameMain = ""
+	orgNameType = ""
+
+	while os.path.exists(pathRoot + chr_path + nameElement):
+		if orgNameMain == "":
+			if os.path.isfile(pathRoot + chr_path + nameElement):
+				orgNameMain = os.path.basename(pathRoot + chr_path + nameElement)
+				orgNameType = os.path.splitext(orgNameMain)[1].replace(".", "")
+				orgNameMain = os.path.splitext(orgNameMain)[0]
+			else: orgNameMain = nameElement
+
+		if flg_timestamp: nameElement = orgNameMain + "_" + IBase_get_timestamp("yyyymmdd_hhmmss")
+		else:
+			ver_cnt 	= ver_cnt + 1
+			nameElement = orgNameMain + "_" + str(ver_cnt)
+
+		if orgNameType != "": nameElement = nameElement + "." + orgNameType
+
+	#--- Release -----------------------------------------------------------------------------------
+	return nameElement
 
 
 
